@@ -58,6 +58,11 @@ type ChartData struct {
 	Data []int  `json:"data"`
 }
 
+type MockChartData struct {
+	Data []int
+	Date []string
+}
+
 type QueryInfo struct {
 	Querys map[int]Querys
 }

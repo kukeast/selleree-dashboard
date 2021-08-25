@@ -45,11 +45,10 @@ func CreateTableQuery(requestInfo structs.RequestTableData) structs.QueryInfo {
 	return result
 }
 
-func CreateChartQuery(requestInfo structs.RequestChartData) structs.QueryInfo {
-	var result structs.QueryInfo
+func CreateChartQuery(requestInfo structs.RequestChartData) structs.Querys {
+	var result structs.Querys
 
 	var dateRange string = CreateDateRange(requestInfo.StartDate, requestInfo.EndDate, requestInfo.Name)
-	var chartQuerys = structs.NewQueryInfo()
 	var dateCycle string = CreateDateCycle(requestInfo.Cycle, requestInfo.Name)
 	var eventQuery string
 	var segmentQuery string
@@ -79,8 +78,7 @@ func CreateChartQuery(requestInfo structs.RequestChartData) structs.QueryInfo {
 		var query structs.Querys
 		query.Header = requestInfo.Segment
 		query.Query = strings.Join(combination, " ")
-		chartQuerys.Querys[1] = query
-		result = chartQuerys
+		result = query
 	} else if requestInfo.Name == "order" {
 		for _, event := range orderEvent {
 			if requestInfo.Event == event["header"] {
@@ -107,8 +105,7 @@ func CreateChartQuery(requestInfo structs.RequestChartData) structs.QueryInfo {
 		var query structs.Querys
 		query.Header = requestInfo.Segment
 		query.Query = strings.Join(combination, " ")
-		chartQuerys.Querys[1] = query
-		result = chartQuerys
+		result = query
 	}
 	return result
 }
@@ -144,17 +141,17 @@ func CreateDateCycle(cycle string, name string) string {
 		if cycle == "daily" {
 			dateCycle = "date(Seller.created_at)"
 		} else if cycle == "weekly" {
-			dateCycle = "week(Seller.created_at)"
+			dateCycle = "DATE_SUB(date(Seller.created_at), INTERVAL DAYOFWEEK(date(Seller.created_at)) - 1 DAY)"
 		} else if cycle == "monthly" {
-			dateCycle = "month(Seller.created_at)"
+			dateCycle = "DATE_SUB(date(Seller.created_at), INTERVAL DAYOFMONTH(date(Seller.created_at)) - 1 DAY)"
 		}
 	} else if name == "order" {
 		if cycle == "daily" {
 			dateCycle = "date(Orders.created_at)"
 		} else if cycle == "weekly" {
-			dateCycle = "week(Orders.created_at)"
+			dateCycle = "DATE_SUB(date(Orders.created_at), INTERVAL DAYOFWEEK(date(Orders.created_at)) - 1 DAY)"
 		} else if cycle == "monthly" {
-			dateCycle = "month(Orders.created_at)"
+			dateCycle = "DATE_SUB(date(Orders.created_at), INTERVAL DAYOFMONTH(date(Orders.created_at)) - 1 DAY)"
 		}
 	}
 

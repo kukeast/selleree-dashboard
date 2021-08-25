@@ -6,6 +6,7 @@ import (
 	"main/modules/query"
 	s "main/modules/structs"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -106,33 +107,50 @@ func GetChart(requestInfo s.RequestChartData) s.ChartDataSet {
 	var result s.ChartDataSet
 
 	//create Query
-	var querys s.QueryInfo = query.CreateChartQuery(requestInfo)
+	var query s.Querys = query.CreateChartQuery(requestInfo)
+	var allDate []string = CreateAllDate(requestInfo)
 	var dataSet s.ChartData
-	for _, query := range querys.Querys {
-		rows, err := db.Query(query.Query)
+	rows, err := db.Query(query.Query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var mockData s.MockChartData
+
+	if requestInfo.Cycle == "daily" {
+		for _, date := range allDate {
+			mockData.Date = append(mockData.Date, date)
+			mockData.Data = append(mockData.Data, 0)
+		}
+	}
+
+	var number int
+	var date string
+
+	for rows.Next() {
+		err := rows.Scan(&number, &date)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer rows.Close()
-
-		var number int
-		var date string
-
-		for rows.Next() {
-			err := rows.Scan(&number, &date)
-			if err != nil {
-				log.Fatal(err)
+		//fmt.Println(date)
+		date = strings.Replace(date, "-", ".", 2)
+		date = strings.Replace(date, ".0", ".", 2)
+		if requestInfo.Cycle == "daily" {
+			for i, mockDate := range mockData.Date {
+				if mockDate == date {
+					mockData.Data[i] = number
+				}
 			}
-			date = strings.Replace(date, "-", ".", 2)
-			date = strings.Replace(date, ".0", ".", 2)
-
-			dataSet.Data = append(dataSet.Data, number)
-			result.Categories = append(result.Categories, date)
+		} else {
+			mockData.Date = append(mockData.Date, date)
+			mockData.Data = append(mockData.Data, number)
 		}
-
-		dataSet.Name = requestInfo.Segment + " | " + requestInfo.Event
-		result.Data = append(result.Data, dataSet)
 	}
+	dataSet.Data = mockData.Data
+	dataSet.Name = requestInfo.Segment + " | " + requestInfo.Event
+	result.Data = append(result.Data, dataSet)
+	result.Categories = mockData.Date
 	return result
 }
 
@@ -208,5 +226,21 @@ func GetShopggus() []s.ShopgguData {
 		result = append(result, data)
 	}
 
+	return result
+}
+
+func CreateAllDate(requestInfo s.RequestChartData) []string {
+	var result []string
+	var startDate string = requestInfo.StartDate
+	var endDate string = requestInfo.EndDate
+	t, _ := time.Parse("2006-01-02", startDate)
+	t2, _ := time.Parse("2006-01-02", endDate)
+	days := int(t2.Sub(t).Hours() / 24)
+	for i := 0; i < days+1; i++ {
+		var dateString string = t.Format("2006.01.02")
+		dateString = strings.Replace(dateString, ".0", ".", 2)
+		result = append(result, dateString)
+		t = t.AddDate(0, 0, 1)
+	}
 	return result
 }
