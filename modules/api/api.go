@@ -16,7 +16,7 @@ import (
 func Api() {
 	router := gin.Default()
 	router.Use(CORSMiddleware())
-	router.POST("/table/:name", func(c *gin.Context) {
+	router.POST("/api/table/:name", func(c *gin.Context) {
 		//get body
 		body := c.Request.Body
 		value, _ := ioutil.ReadAll(body)
@@ -41,7 +41,7 @@ func Api() {
 		}
 	})
 
-	router.POST("/chart/:name", func(c *gin.Context) {
+	router.POST("/api/chart/:name", func(c *gin.Context) {
 		//get body
 		body := c.Request.Body
 		value, _ := ioutil.ReadAll(body)
@@ -62,13 +62,14 @@ func Api() {
 		})
 	})
 
-	router.GET("/products", func(c *gin.Context) {
+	router.GET("/api/products/:limit", func(c *gin.Context) {
+		var limit string = c.Param("limit")
 		c.JSON(http.StatusOK, gin.H{
-			"data": mysql.GetProducts(),
+			"data": mysql.GetProducts(limit),
 		})
 	})
 
-	router.GET("/shopggus", func(c *gin.Context) {
+	router.GET("/api/shopggus", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetShopggus(),
 		})

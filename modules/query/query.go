@@ -368,7 +368,7 @@ var ProductsQuery string = `
 	) AS Store
 	ON Store.id = Item.store_id
 	ORDER BY Item.created_at desc
-	LIMIT 20
+	LIMIT 
 `
 var ShopggusQuery string = `
 	SELECT Mall.store_identifier, Mall_Theme.order, date_format(Mall_Theme.published_at, '%H시 %i분 %s초')
@@ -379,5 +379,5 @@ var ShopggusQuery string = `
 	) AS Mall
 	ON Mall.id = Mall_Theme.mall_id
 	ORDER BY Mall_Theme.published_at desc
-	LIMIT 10
+	LIMIT 16
 `

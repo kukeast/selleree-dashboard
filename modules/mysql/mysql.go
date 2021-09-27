@@ -154,7 +154,7 @@ func GetChart(requestInfo s.RequestChartData) s.ChartDataSet {
 	return result
 }
 
-func GetProducts() []s.ProductData {
+func GetProducts(limit string) []s.ProductData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -166,7 +166,7 @@ func GetProducts() []s.ProductData {
 
 	//create Query
 	var query string = query.ProductsQuery
-
+	query = query + limit
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)
