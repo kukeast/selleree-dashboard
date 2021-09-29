@@ -75,6 +75,19 @@ func Api() {
 		})
 	})
 
+	router.GET("/api/today", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetToday(),
+		})
+	})
+
+	router.GET("/api/today-chart/:name", func(c *gin.Context) {
+		var name string = c.Param("name")
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetTodayChart(name),
+		})
+	})
+
 	router.Run()
 }
 

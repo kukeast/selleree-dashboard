@@ -2,6 +2,11 @@ package structs
 
 import "database/sql"
 
+type TodayData struct {
+	Date  string `json:"date"`
+	Count string `json:"count"`
+}
+
 type ShopgguData struct {
 	StoreName string `json:"store-name"`
 	Order     int    `json:"order"`

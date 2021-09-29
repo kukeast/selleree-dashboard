@@ -108,7 +108,7 @@ func GetChart(requestInfo s.RequestChartData) s.ChartDataSet {
 
 	//create Query
 	var query s.Querys = query.CreateChartQuery(requestInfo)
-	var allDate []string = CreateAllDate(requestInfo)
+	var allDate []string = CreateAllDate(requestInfo.StartDate, requestInfo.EndDate)
 	var dataSet s.ChartData
 	rows, err := db.Query(query.Query)
 	if err != nil {
@@ -229,13 +229,117 @@ func GetShopggus() []s.ShopgguData {
 	return result
 }
 
-func CreateAllDate(requestInfo s.RequestChartData) []string {
+func GetToday() [][]s.TodayData {
+	var results [][]s.TodayData
+
+	//create Query
+	for i := 0; i < 4; i++ {
+		//db 연결
+		var dbs string
+		if i == 3 {
+			dbs = db2
+		} else {
+			dbs = db1
+		}
+		db, err := sql.Open("mysql", dbs)
+
+		if err != nil {
+			panic(err) //에러가 있으면 프로그램을 종료해라
+		}
+		defer db.Close() //main함수가 끝나면 db를 닫아라
+		var query string = query.TodayQuery[i]
+		var result []s.TodayData
+		rows, err := db.Query(query)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		var data s.TodayData
+
+		for rows.Next() {
+			err := rows.Scan(&data.Date, &data.Count)
+			if err != nil {
+				log.Fatal(err)
+			}
+			result = append(result, data)
+		}
+		results = append(results, result)
+	}
+
+	return results
+}
+func GetTodayChart(name string) s.ChartDataSet {
+	//db 연결
+	var dbs string
+	if name == "published" {
+		dbs = db2
+	} else {
+		dbs = db1
+	}
+	db, err := sql.Open("mysql", dbs)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result s.ChartDataSet
+
+	//create Query
+	var query string = query.TodayChartQuery[name]
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var currentTime = time.Now()
+	var allDate = CreateAllDate(currentTime.AddDate(0, 0, -30).Format("2006-01-02"), currentTime.Format("2006-01-02"))
+	var dataSet s.ChartData
+
+	var mockData s.MockChartData
+	for _, date := range allDate {
+		mockData.Date = append(mockData.Date, date)
+		mockData.Data = append(mockData.Data, 0)
+	}
+	var data int
+	var date string
+
+	for rows.Next() {
+		err := rows.Scan(&date, &data)
+		if err != nil {
+			log.Fatal(err)
+		}
+		date = strings.Replace(date, "-", ".", 2)
+		date = strings.Replace(date, ".0", ".", 2)
+		for i, mockDate := range mockData.Date {
+			if mockDate == date {
+				mockData.Data[i] = data
+			}
+		}
+		dataSet.Data = mockData.Data
+	}
+	if name == "store" {
+		dataSet.Name = "상점 개설"
+	} else if name == "item" {
+		dataSet.Name = "상품 등록"
+	} else if name == "order" {
+		dataSet.Name = "주문"
+	} else if name == "published" {
+		dataSet.Name = "샵꾸 발행"
+	}
+
+	result.Data = append(result.Data, dataSet)
+	result.Categories = mockData.Date
+
+	return result
+}
+func CreateAllDate(startDate string, endDate string) []string {
+
 	var result []string
-	var startDate string = requestInfo.StartDate
-	var endDate string = requestInfo.EndDate
 	t, _ := time.Parse("2006-01-02", startDate)
 	t2, _ := time.Parse("2006-01-02", endDate)
 	days := int(t2.Sub(t).Hours() / 24)
+
 	for i := 0; i < days+1; i++ {
 		var dateString string = t.Format("2006.01.02")
 		dateString = strings.Replace(dateString, ".0", ".", 2)

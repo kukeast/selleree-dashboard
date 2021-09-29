@@ -381,3 +381,59 @@ var ShopggusQuery string = `
 	ORDER BY Mall_Theme.published_at desc
 	LIMIT 16
 `
+var TodayQuery = [4]string{
+	`
+		SELECT date(created_at), count(created_at)
+		FROM selleree.store
+		WHERE DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		GROUP BY date(created_at)
+		ORDER BY date(created_at) desc
+	`,
+	`
+		SELECT date(created_at), count(created_at)
+		FROM selleree.item
+		WHERE DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		GROUP BY date(created_at)
+		ORDER BY date(created_at) desc
+	`,
+	`
+		SELECT date(created_at), count(created_at)
+		FROM selleree.order
+		WHERE DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		GROUP BY date(created_at)
+		ORDER BY date(created_at) desc
+	`,
+	`
+		SELECT date(published_at) ,count(published_at)
+		FROM editor.mall_themes
+		WHERE DATE(published_at) = CURDATE() or DATE(published_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		GROUP BY date(published_at)
+		ORDER BY date(published_at) desc
+	`,
+}
+var TodayChartQuery = map[string]string{
+	"store": `
+		SELECT date(created_at) ,count(created_at)
+		FROM selleree.store
+		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		group by date(created_at)	
+	`,
+	"item": `
+		SELECT date(created_at) ,count(created_at)
+		FROM selleree.item
+		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		group by date(created_at)	
+	`,
+	"order": `
+		SELECT date(created_at) ,count(created_at)
+		FROM selleree.order
+		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		group by date(created_at)	
+	`,
+	"published": `
+		SELECT date(published_at) ,count(published_at)
+		FROM editor.mall_themes
+		where date(published_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		group by date(published_at)	
+	`,
+}
