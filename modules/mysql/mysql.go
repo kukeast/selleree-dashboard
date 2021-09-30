@@ -196,6 +196,43 @@ func GetProducts(limit string) []s.ProductData {
 	return result
 }
 
+func GetOrders(limit string) []s.OrderData {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result []s.OrderData
+
+	//create Query
+	var query string = query.OrdersQuery
+	query = query + limit
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var data s.OrderData
+
+	for rows.Next() {
+		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.BuyerName, &data.BankAccountHolder, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if data.RawUrl.Valid {
+			data.ImageUrl = data.RawUrl.String
+		} else {
+			data.ImageUrl = ""
+		}
+		result = append(result, data)
+	}
+
+	return result
+}
+
 func GetShopggus() []s.ShopgguData {
 	//db 연결
 	db, err := sql.Open("mysql", db2)

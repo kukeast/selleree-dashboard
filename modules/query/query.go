@@ -381,6 +381,22 @@ var ShopggusQuery string = `
 	ORDER BY Mall_Theme.published_at desc
 	LIMIT 16
 `
+var OrdersQuery string = `
+	SELECT o.id, o.title, o.buyer_name, o.bank_account_holder, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url
+	FROM selleree.order AS o
+	LEFT JOIN (
+		SELECT *
+		FROM selleree.store
+	)AS store
+	ON o.store_id = store.id
+	LEFT JOIN (
+		SELECT *
+		FROM selleree.order_item
+	)AS item
+	ON item.order_id = o.id
+	ORDER BY id desc
+	LIMIT
+`
 var TodayQuery = [4]string{
 	`
 		SELECT date(created_at), count(created_at)

@@ -27,6 +27,21 @@ type ProductData struct {
 	StoreId    string         `json:"store-id"`
 }
 
+type OrderData struct {
+	OrderId            string         `json:"id"`
+	OrderTitle         string         `json:"title"`
+	BuyerName          string         `json:"buyer_name"`
+	BankAccountHolder  string         `json:"bank_account_holder"`
+	DefaultShippingFee string         `json:"default_shipping_fee"`
+	ExtraShippingFee   string         `json:"extra_shipping_fee"`
+	Name               string         `json:"name"`
+	Identifier         string         `json:"identifier"`
+	Price              string         `json:"price"`
+	Quantity           string         `json:"quantity"`
+	ImageUrl           string         `json:"image_url"`
+	RawUrl             sql.NullString `json:"-"`
+}
+
 type RequestChartData struct {
 	StartDate string //2021-1-1
 	EndDate   string //2021-1-1

@@ -69,6 +69,13 @@ func Api() {
 		})
 	})
 
+	router.GET("/api/orders/:limit", func(c *gin.Context) {
+		var limit string = c.Param("limit")
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetOrders(limit),
+		})
+	})
+
 	router.GET("/api/shopggus", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetShopggus(),
