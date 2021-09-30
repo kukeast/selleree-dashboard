@@ -222,7 +222,6 @@ func GetShopggus() []s.ShopgguData {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		result = append(result, data)
 	}
 
@@ -293,7 +292,7 @@ func GetTodayChart(name string) s.ChartDataSet {
 	}
 	defer rows.Close()
 	var currentTime = time.Now()
-	var allDate = CreateAllDate(currentTime.AddDate(0, 0, -30).Format("2006-01-02"), currentTime.Format("2006-01-02"))
+	var allDate = CreateAllDate(currentTime.AddDate(0, 0, -29).Format("2006-01-02"), currentTime.Format("2006-01-02"))
 	var dataSet s.ChartData
 
 	var mockData s.MockChartData
@@ -301,6 +300,7 @@ func GetTodayChart(name string) s.ChartDataSet {
 		mockData.Date = append(mockData.Date, date)
 		mockData.Data = append(mockData.Data, 0)
 	}
+
 	var data int
 	var date string
 
