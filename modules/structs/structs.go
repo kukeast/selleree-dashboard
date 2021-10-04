@@ -33,6 +33,7 @@ type OrderData struct {
 	// BuyerName          string         `json:"buyer_name"`
 	// BankAccountHolder  string         `json:"bank_account_holder"`
 	CreatedAt          string         `json:"created_at"`
+	LastModifiedAt     string         `json:"last_modified_at"`
 	DefaultShippingFee string         `json:"default_shipping_fee"`
 	ExtraShippingFee   string         `json:"extra_shipping_fee"`
 	Name               string         `json:"name"`

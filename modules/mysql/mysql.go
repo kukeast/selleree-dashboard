@@ -196,7 +196,7 @@ func GetProducts(limit string) []s.ProductData {
 	return result
 }
 
-func GetOrders(limit string) []s.OrderData {
+func GetOrders(limit string, sortBy string) []s.OrderData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -208,7 +208,7 @@ func GetOrders(limit string) []s.OrderData {
 
 	//create Query
 	var query string = query.OrdersQuery
-	query = query + limit
+	query = query + " ORDER BY " + sortBy + " desc " + "LIMIT " + limit
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)
@@ -218,7 +218,7 @@ func GetOrders(limit string) []s.OrderData {
 	var data s.OrderData
 
 	for rows.Next() {
-		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.CreatedAt, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl, &data.FinancialStatus, &data.FulfillmentStatus)
+		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.CreatedAt, &data.LastModifiedAt, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl, &data.FinancialStatus, &data.FulfillmentStatus)
 		if err != nil {
 			log.Fatal(err)
 		}

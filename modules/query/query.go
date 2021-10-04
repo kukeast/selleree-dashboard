@@ -384,7 +384,7 @@ var ShopggusQuery string = `
 
 //SELECT o.id, o.title, o.buyer_name, o.bank_account_holder, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status
 var OrdersQuery string = `
-	SELECT o.id, o.title, o.created_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status
+	SELECT o.id, o.title, o.created_at, o.last_modified_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status
 	FROM selleree.order AS o
 	LEFT JOIN (
 		SELECT *
@@ -396,8 +396,6 @@ var OrdersQuery string = `
 		FROM selleree.order_item
 	)AS item
 	ON item.order_id = o.id
-	ORDER BY id desc
-	LIMIT
 `
 var TodayQuery = [4]string{
 	`

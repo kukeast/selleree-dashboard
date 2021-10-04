@@ -69,10 +69,16 @@ func Api() {
 		})
 	})
 
-	router.GET("/api/orders/:limit", func(c *gin.Context) {
+	router.POST("/api/orders/:limit", func(c *gin.Context) {
 		var limit string = c.Param("limit")
+
+		body := c.Request.Body
+		value, _ := ioutil.ReadAll(body)
+		var data map[string]string
+		json.Unmarshal([]byte(value), &data)
+
 		c.JSON(http.StatusOK, gin.H{
-			"data": mysql.GetOrders(limit),
+			"data": mysql.GetOrders(limit, data["sortBy"]),
 		})
 	})
 
