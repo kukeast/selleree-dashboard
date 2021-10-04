@@ -371,7 +371,7 @@ var ProductsQuery string = `
 	LIMIT 
 `
 var ShopggusQuery string = `
-	SELECT Mall.store_identifier, Mall_Theme.order, date_format(Mall_Theme.published_at, '%H시 %i분 %s초')
+	SELECT Mall.store_identifier, Mall_Theme.order, Mall_Theme.published_at
 	FROM editor.mall_themes AS Mall_Theme
 	LEFT JOIN (
 		SELECT *
@@ -381,8 +381,10 @@ var ShopggusQuery string = `
 	ORDER BY Mall_Theme.published_at desc
 	LIMIT 16
 `
+
+//SELECT o.id, o.title, o.buyer_name, o.bank_account_holder, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status
 var OrdersQuery string = `
-	SELECT o.id, o.title, o.buyer_name, o.bank_account_holder, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url
+	SELECT o.id, o.title, o.created_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status
 	FROM selleree.order AS o
 	LEFT JOIN (
 		SELECT *

@@ -218,7 +218,7 @@ func GetOrders(limit string) []s.OrderData {
 	var data s.OrderData
 
 	for rows.Next() {
-		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.BuyerName, &data.BankAccountHolder, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl)
+		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.CreatedAt, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl, &data.FinancialStatus, &data.FulfillmentStatus)
 		if err != nil {
 			log.Fatal(err)
 		}

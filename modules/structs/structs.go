@@ -28,10 +28,11 @@ type ProductData struct {
 }
 
 type OrderData struct {
-	OrderId            string         `json:"id"`
-	OrderTitle         string         `json:"title"`
-	BuyerName          string         `json:"buyer_name"`
-	BankAccountHolder  string         `json:"bank_account_holder"`
+	OrderId    string `json:"id"`
+	OrderTitle string `json:"title"`
+	// BuyerName          string         `json:"buyer_name"`
+	// BankAccountHolder  string         `json:"bank_account_holder"`
+	CreatedAt          string         `json:"created_at"`
 	DefaultShippingFee string         `json:"default_shipping_fee"`
 	ExtraShippingFee   string         `json:"extra_shipping_fee"`
 	Name               string         `json:"name"`
@@ -40,6 +41,8 @@ type OrderData struct {
 	Quantity           string         `json:"quantity"`
 	ImageUrl           string         `json:"image_url"`
 	RawUrl             sql.NullString `json:"-"`
+	FinancialStatus    string         `json:"financial_status"`
+	FulfillmentStatus  string         `json:"fulfillment_status"`
 }
 
 type RequestChartData struct {
