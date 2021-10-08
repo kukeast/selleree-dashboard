@@ -367,6 +367,7 @@ var ProductsQuery string = `
 		FROM selleree.store
 	) AS Store
 	ON Store.id = Item.store_id
+	WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
 	ORDER BY Item.created_at desc
 	LIMIT 
 `
@@ -378,6 +379,7 @@ var ShopggusQuery string = `
 		FROM editor.malls
 	) AS Mall
 	ON Mall.id = Mall_Theme.mall_id
+	WHERE Mall.seller_id not in (1, 2, 3, 5, 55, 100, 149)
 	ORDER BY Mall_Theme.published_at desc
 	LIMIT 16
 `
@@ -396,6 +398,7 @@ var OrdersQuery string = `
 		FROM selleree.order_item
 	)AS item
 	ON item.order_id = o.id
+	WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
 `
 var TodayQuery = [4]string{
 	`
@@ -408,23 +411,28 @@ var TodayQuery = [4]string{
 	`
 		SELECT date(created_at), count(created_at)
 		FROM selleree.item
-		WHERE DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		WHERE (DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) and store_id not in (1, 2, 9, 10, 49, 126, 209)
 		GROUP BY date(created_at)
 		ORDER BY date(created_at) desc
 	`,
 	`
 		SELECT date(created_at), count(created_at)
 		FROM selleree.order
-		WHERE DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+		WHERE (DATE(created_at) = CURDATE() or DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) and store_id not in (1, 2, 9, 10, 49, 126, 209)
 		GROUP BY date(created_at)
 		ORDER BY date(created_at) desc
 	`,
 	`
-		SELECT date(published_at) ,count(published_at)
-		FROM editor.mall_themes
-		WHERE DATE(published_at) = CURDATE() or DATE(published_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-		GROUP BY date(published_at)
-		ORDER BY date(published_at) desc
+		SELECT date(themes.published_at) ,count(themes.published_at)
+		FROM editor.mall_themes as themes
+		left join(
+			select * 
+			from editor.malls
+		) as malls
+		on malls.id = themes.mall_id
+		WHERE (DATE(themes.published_at) = CURDATE() or DATE(themes.published_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) and malls.seller_id not in (1, 2, 3, 5, 55, 100, 149)
+		GROUP BY date(themes.published_at)
+		ORDER BY date(themes.published_at) desc
 	`,
 }
 var TodayChartQuery = map[string]string{
@@ -437,19 +445,24 @@ var TodayChartQuery = map[string]string{
 	"item": `
 		SELECT date(created_at) ,count(created_at)
 		FROM selleree.item
-		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY) and store_id not in (1, 2, 9, 10, 49, 126, 209)
 		group by date(created_at)	
 	`,
 	"order": `
 		SELECT date(created_at) ,count(created_at)
 		FROM selleree.order
-		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+		where date(created_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY) and store_id not in (1, 2, 9, 10, 49, 126, 209)
 		group by date(created_at)	
 	`,
 	"published": `
-		SELECT date(published_at) ,count(published_at)
-		FROM editor.mall_themes
-		where date(published_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-		group by date(published_at)	
+		SELECT date(themes.published_at) ,count(themes.published_at)
+		FROM editor.mall_themes as themes
+		left join(
+			select * 
+			from editor.malls
+		) as malls
+		on malls.id = themes.mall_id
+		where date(themes.published_at) > DATE_SUB(CURDATE(), INTERVAL 30 DAY) and malls.seller_id not in (1, 2, 3, 5, 55, 100, 149)
+		group by date(themes.published_at)	
 	`,
 }
