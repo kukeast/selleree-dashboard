@@ -28,10 +28,8 @@ type ProductData struct {
 }
 
 type OrderData struct {
-	OrderId    string `json:"id"`
-	OrderTitle string `json:"title"`
-	// BuyerName          string         `json:"buyer_name"`
-	// BankAccountHolder  string         `json:"bank_account_holder"`
+	OrderId            string         `json:"id"`
+	OrderTitle         string         `json:"title"`
 	CreatedAt          string         `json:"created_at"`
 	LastModifiedAt     string         `json:"last_modified_at"`
 	DefaultShippingFee string         `json:"default_shipping_fee"`
@@ -44,32 +42,6 @@ type OrderData struct {
 	RawUrl             sql.NullString `json:"-"`
 	FinancialStatus    string         `json:"financial_status"`
 	FulfillmentStatus  string         `json:"fulfillment_status"`
-}
-
-type RequestChartData struct {
-	StartDate string //2021-1-1
-	EndDate   string //2021-1-1
-	Name      string //seller
-	Cycle     string //daily, weekly, monthly
-	Segment   string //all,man
-	Event     string //created account
-}
-
-type RequestTableData struct {
-	StartDate string //2021-1-1
-	EndDate   string //2021-1-1
-	Name      string //seller
-}
-
-type SellerTableData struct {
-	Header    string `json:"header"`
-	TableData [7]int `json:"data"`
-	Id        int    `json:"id"`
-}
-type OrderTableData struct {
-	Header    string `json:"header"`
-	TableData [2]int `json:"data"`
-	Id        int    `json:"id"`
 }
 
 type ChartDataSet struct {
@@ -85,19 +57,4 @@ type ChartData struct {
 type MockChartData struct {
 	Data []int
 	Date []string
-}
-
-type QueryInfo struct {
-	Querys map[int]Querys
-}
-
-type Querys struct {
-	Query  string
-	Header string
-}
-
-func NewQueryInfo() QueryInfo {
-	d := QueryInfo{}
-	d.Querys = map[int]Querys{}
-	return d
 }
