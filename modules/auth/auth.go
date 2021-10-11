@@ -22,7 +22,7 @@ func LogIn(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, "json이 올바르지 않습니다.")
 		return
 	}
-	if id != u.Username || pw != u.Password {
+	if id != u.Id || pw != u.Password {
 		c.JSON(http.StatusUnauthorized, "아이디 또는 비밀번호가 일치하지 않아요.")
 		return
 	}

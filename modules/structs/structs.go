@@ -3,7 +3,7 @@ package structs
 import "database/sql"
 
 type User struct {
-	Username string `json:"username"`
+	Id       string `json:"id"`
 	Password string `json:"password"`
 }
 
