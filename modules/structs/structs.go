@@ -2,6 +2,16 @@ package structs
 
 import "database/sql"
 
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type Tokens struct {
+	AccessToken  string
+	RefreshToken string
+}
+
 type TodayData struct {
 	Date  string `json:"date"`
 	Count string `json:"count"`

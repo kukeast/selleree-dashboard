@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"main/modules/auth"
 	"main/modules/mysql"
 
 	"github.com/gin-gonic/gin"
@@ -55,6 +56,13 @@ func Api() {
 		})
 	})
 
+	router.POST("api/login", auth.LogIn)
+	router.GET("/api/test", TokenAuthMiddleware(), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"data": "test gogo",
+		})
+	})
+	router.POST("api/refresh", auth.Refresh)
 	router.Run()
 }
 
@@ -70,6 +78,18 @@ func CORSMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		c.Next()
+	}
+}
+
+func TokenAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		err := auth.TokenValid(c.Request)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, err.Error())
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }
