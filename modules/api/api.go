@@ -17,14 +17,14 @@ func Api() {
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 
-	router.GET("/api/products/:limit", func(c *gin.Context) {
+	router.GET("/api/products/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
 		var limit string = c.Param("limit")
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetProducts(limit),
 		})
 	})
 
-	router.POST("/api/orders/:limit", func(c *gin.Context) {
+	router.POST("/api/orders/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
 		var limit string = c.Param("limit")
 
 		body := c.Request.Body
@@ -37,19 +37,19 @@ func Api() {
 		})
 	})
 
-	router.GET("/api/shopggus", func(c *gin.Context) {
+	router.GET("/api/shopggus", TokenAuthMiddleware(), func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetShopggus(),
 		})
 	})
 
-	router.GET("/api/today", func(c *gin.Context) {
+	router.GET("/api/today", TokenAuthMiddleware(), func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetToday(),
 		})
 	})
 
-	router.GET("/api/today-chart/:name", func(c *gin.Context) {
+	router.GET("/api/today-chart/:name", TokenAuthMiddleware(), func(c *gin.Context) {
 		var name string = c.Param("name")
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetTodayChart(name),
@@ -72,6 +72,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Credentials", "true")
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Methods", "POST")
+		c.Header("Access-Control-Expose-Headers", "Authorization")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)

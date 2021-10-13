@@ -102,7 +102,6 @@ func Refresh(c *gin.Context) {
 	var data map[string]string
 	json.Unmarshal([]byte(value), &data)
 	refreshToken := data["refresh-token"]
-
 	//인증
 	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -114,6 +113,7 @@ func Refresh(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "리프레시 토큰이 만료됐습니다.")
 		return
 	}
+
 	//만료 확인
 	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
 		c.JSON(http.StatusUnauthorized, err)

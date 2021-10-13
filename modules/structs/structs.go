@@ -8,8 +8,8 @@ type User struct {
 }
 
 type Tokens struct {
-	AccessToken  string
-	RefreshToken string
+	AccessToken  string `json:"access-token"`
+	RefreshToken string `json:"refresh-token"`
 }
 
 type TodayData struct {
