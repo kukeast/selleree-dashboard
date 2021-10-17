@@ -41,7 +41,7 @@ func CreateToken() (*s.Tokens, error) {
 	//액세스 토큰
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
 	if err != nil {
