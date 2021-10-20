@@ -54,6 +54,34 @@ type OrderData struct {
 	FulfillmentStatus  string         `json:"fulfillment_status"`
 }
 
+type OrderDetailData struct {
+	BuyerName            string         `json:"buyer_name"`
+	BuyerEmail           string         `json:"buyer_email"`
+	BuyerCellPhoneNumber string         `json:"buyer_cell_phone_number"`
+	ZipCode              string         `json:"zip_code"`
+	AddressLine          string         `json:"address_line"`
+	AddressDetailLine    string         `json:"address_detail_line"`
+	RawDetailLine        sql.NullString `json:"-"`
+	BankName             string         `json:"bank_name"`
+	BankAccountNumber    string         `json:"bank_account_number"`
+	BankAccountHolder    string         `json:"bank_account_holder"`
+	Memo                 string         `json:"memo"`
+	RawMemo              sql.NullString `json:"-"`
+	DefaultShippingFee   string         `json:"default_shipping_fee"`
+	ExtraShippingFee     string         `json:"extra_shipping_fee"`
+	FinancialStatus      string         `json:"financial_status"`
+	FulfillmentStatus    string         `json:"fulfillment_status"`
+	CreatedAt            string         `json:"created_at"`
+	LastModifiedAt       string         `json:"last_modified_at"`
+	StoreName            string         `json:"store_name"`
+	Identifier           string         `json:"identifier"`
+	ItemName             string         `json:"item_name"`
+	Price                string         `json:"price"`
+	Quantity             string         `json:"quantity"`
+	ImageUrl             string         `json:"image_url"`
+	RawUrl               sql.NullString `json:"-"`
+	ItemId               string         `json:"item_id"`
+}
 type ChartDataSet struct {
 	Categories []string    `json:"categories"`
 	Data       []ChartData `json:"data"`

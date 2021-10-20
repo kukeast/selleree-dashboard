@@ -46,6 +46,21 @@ var OrdersQuery string = `
 	ON item.order_id = o.id
 	WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
 `
+var OrderDetailQuery string = `
+	SELECT o.buyer_name, o.buyer_email, o.buyer_cell_phone_number, o.zip_code, o.address_line, o.address_detail_line, o.bank_name, o.bank_account_number, o.bank_account_holder, o.financial_status, o.fulfillment_status, o.default_shipping_fee, o.extra_shipping_fee, o.memo, o.created_at, o.last_modified_at, store.name, store.identifier, item.name, item.price, item.image_url, item.quantity, item.item_id
+	FROM selleree.order AS o
+	LEFT JOIN (
+		SELECT *
+		FROM selleree.store
+	)AS store
+	ON o.store_id = store.id
+	LEFT JOIN (
+		SELECT *
+		FROM selleree.order_item
+	)AS item
+	ON item.order_id = o.id
+	WHERE o.id = 
+`
 var TodayQuery = [4]string{
 	`
 		SELECT date(created_at), count(created_at)

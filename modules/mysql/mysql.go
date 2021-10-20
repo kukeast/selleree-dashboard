@@ -63,6 +63,66 @@ func GetProducts(limit string) []s.ProductData {
 	return result
 }
 
+func GetOrderDetail(orderId string) s.OrderDetailData {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result s.OrderDetailData
+
+	//create Query
+	var query string = query.OrderDetailQuery
+	query = query + orderId
+
+	row := db.QueryRow(query)
+	err = row.Scan(
+		&result.BuyerName,
+		&result.BuyerEmail,
+		&result.BuyerCellPhoneNumber,
+		&result.ZipCode,
+		&result.AddressLine,
+		&result.RawDetailLine,
+		&result.BankName,
+		&result.BankAccountNumber,
+		&result.BankAccountHolder,
+		&result.FinancialStatus,
+		&result.FulfillmentStatus,
+		&result.DefaultShippingFee,
+		&result.ExtraShippingFee,
+		&result.RawMemo,
+		&result.CreatedAt,
+		&result.LastModifiedAt,
+		&result.StoreName,
+		&result.Identifier,
+		&result.ItemName,
+		&result.Price,
+		&result.RawUrl,
+		&result.Quantity,
+		&result.ItemId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if result.RawUrl.Valid {
+		result.ImageUrl = result.RawUrl.String
+	} else {
+		result.ImageUrl = ""
+	}
+	if result.RawMemo.Valid {
+		result.Memo = result.RawMemo.String
+	} else {
+		result.Memo = ""
+	}
+	if result.RawDetailLine.Valid {
+		result.AddressDetailLine = result.RawDetailLine.String
+	} else {
+		result.Memo = ""
+	}
+	return result
+}
+
 func GetOrders(limit string, sortBy string) []s.OrderData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)

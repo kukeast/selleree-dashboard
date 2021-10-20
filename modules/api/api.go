@@ -37,6 +37,12 @@ func Api() {
 		})
 	})
 
+	router.GET("/api/order/:orderId", TokenAuthMiddleware(), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetOrderDetail(c.Param("orderId")),
+		})
+	})
+
 	router.GET("/api/shopggus", TokenAuthMiddleware(), func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetShopggus(),
