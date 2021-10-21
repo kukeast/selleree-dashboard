@@ -127,3 +127,39 @@ var TodayChartQuery = map[string]string{
 		group by date(themes.published_at)	
 	`,
 }
+var FunnelQuery = func(startDate string, endDate string) string {
+	return `
+		SELECT 
+			sum(if(seller.id, 1, 0)) AS step1,
+			sum(if(store.id, 1, 0)) AS step2,
+			sum(if(json_length(payment.bank_accounts) > 0, 1, 0)) AS step3,
+			sum(if(item.itemCount >= 2, 1, 0)) AS step4,
+			sum(if(orders.orderCount >= 2, 1, 0)) AS step5,
+			sum(if(orders.orderCount >= 10, 1, 0)) AS step6
+		FROM selleree.seller AS seller
+		LEFT JOIN(
+			SELECT seller_id, id
+			FROM selleree.store
+		) AS store
+		ON store.seller_id = seller.id
+		LEFT JOIN(
+			SELECT store_id, count(id) AS itemCount
+			FROM selleree.item
+			GROUP BY store_id
+		) AS item
+		ON store.id = item.store_id
+		LEFT JOIN(
+			SELECT created_at, last_modified_at, store_id, count(id) AS orderCount
+			FROM selleree.order
+			WHERE DATE(last_modified_at) >= DATE_SUB(DATE("` + startDate + `") , INTERVAL 60 DAY) and DATE(last_modified_at) <= DATE("` + endDate + `") and DATE(last_modified_at) != DATE(created_at)
+			GROUP BY store_id
+		) AS orders
+		ON store.id = orders.store_id
+		LEFT JOIN(
+			SELECT store_id, bank_accounts
+			FROM selleree.payment_method
+		) AS payment
+		ON store.id = payment.store_id
+		WHERE seller.id not in (1, 2, 3, 5, 55, 100, 149) and DATE(seller.created_at) >= DATE("` + startDate + `") and DATE(seller.created_at) <= DATE("` + endDate + `") 
+	`
+}

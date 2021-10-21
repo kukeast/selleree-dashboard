@@ -297,6 +297,35 @@ func GetTodayChart(name string) s.ChartDataSet {
 
 	return result
 }
+
+func GetFunnel(startDate string, endDate string) [6]string {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result [6]string
+
+	//create Query
+	var query string = query.FunnelQuery(startDate, endDate)
+
+	row := db.QueryRow(query)
+	err = row.Scan(
+		&result[0],
+		&result[1],
+		&result[2],
+		&result[3],
+		&result[4],
+		&result[5],
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
 func CreateAllDate(startDate string, endDate string) []string {
 
 	var result []string

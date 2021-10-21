@@ -62,6 +62,17 @@ func Api() {
 		})
 	})
 
+	router.POST("/api/funnel", TokenAuthMiddleware(), func(c *gin.Context) {
+		body := c.Request.Body
+		value, _ := ioutil.ReadAll(body)
+		var data map[string]string
+		json.Unmarshal([]byte(value), &data)
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetFunnel(data["startDate"], data["endDate"]),
+		})
+	})
+
 	router.POST("/api/login", oauth.LogIn)
 	router.GET("/api/test", TokenAuthMiddleware(), func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

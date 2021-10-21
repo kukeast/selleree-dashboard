@@ -17,6 +17,15 @@ type TodayData struct {
 	Count string `json:"count"`
 }
 
+type FunnelData struct {
+	Step1 int `json:"step1"`
+	Step2 int `json:"step2"`
+	Step3 int `json:"step3"`
+	Step4 int `json:"step4"`
+	Step5 int `json:"step5"`
+	Step6 int `json:"step6"`
+}
+
 type ShopgguData struct {
 	StoreName string `json:"store-name"`
 	Order     int    `json:"order"`
