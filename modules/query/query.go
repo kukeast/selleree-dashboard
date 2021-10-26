@@ -132,9 +132,11 @@ var FunnelQuery = func(startDate string, endDate string) string {
 		SELECT 
 			sum(if(seller.id, 1, 0)) AS step1,
 			sum(if(store.id, 1, 0)) AS step2,
-			sum(if(item.itemCount >= 1 and payment.store_id, 1, 0 )) AS step3,
-			sum(if(orders.orderCount >= 2, 1, 0)) AS step4,
-			sum(if(orders.orderCount >= 10, 1, 0)) AS step5
+			sum(if(payment.store_id, 1, 0 )) AS step3,
+			sum(if(item.itemCount >= 1 and payment.store_id, 1, 0 )) AS step4,
+			sum(if(orders.orderCount >= 1, 1, 0)) AS step5,
+			sum(if(orders.updatedCount >= 2, 1, 0)) AS step6,
+			sum(if(orders.updatedCount >= 10, 1, 0)) AS step7
 		FROM selleree.seller AS seller
 		LEFT JOIN(
 			SELECT seller_id, id
@@ -149,9 +151,14 @@ var FunnelQuery = func(startDate string, endDate string) string {
 		) AS item
 		ON store.id = item.store_id
 		LEFT JOIN(
-			SELECT created_at, last_modified_at, store_id, count(id) AS orderCount
+			SELECT 
+				created_at, 
+				last_modified_at, 
+				store_id, 
+				count(id) AS orderCount,
+				sum(if(DATE(last_modified_at) != DATE(created_at), 1, 0)) AS updatedCount
 			FROM selleree.order
-			WHERE DATE(last_modified_at) <= DATE("` + endDate + `") and DATE(last_modified_at) != DATE(created_at)
+			WHERE DATE(last_modified_at) <= DATE("` + endDate + `")
 			GROUP BY store_id
 		) AS orders
 		ON store.id = orders.store_id
