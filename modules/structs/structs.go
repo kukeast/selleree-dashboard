@@ -17,13 +17,15 @@ type TodayData struct {
 	Count string `json:"count"`
 }
 
-type FunnelData struct {
-	Step1 int `json:"step1"`
-	Step2 int `json:"step2"`
-	Step3 int `json:"step3"`
-	Step4 int `json:"step4"`
-	Step5 int `json:"step5"`
-	Step6 int `json:"step6"`
+type FunnelDetail struct {
+	RawIdentifier sql.NullString `json:"-"`
+	Identifier    string         `json:"identifier"`
+	RawName       sql.NullString `json:"-"`
+	Name          string         `json:"name"`
+	RawItemCount  sql.NullString `json:"-"`
+	ItemCount     string         `json:"itemCount"`
+	RawOrderCount sql.NullString `json:"-"`
+	OrderCount    string         `json:"orderCount"`
 }
 
 type ShopgguData struct {

@@ -173,3 +173,53 @@ var FunnelQuery = func(startDate string, endDate string) string {
 		WHERE seller.id not in (1, 2, 3, 5, 55, 100, 149) and DATE(seller.created_at) >= DATE("` + startDate + `") and DATE(seller.created_at) <= DATE("` + endDate + `") 
 	`
 }
+
+var FunnelDetailQuery = func(startDate string, endDate string, step string, limit string) string {
+	var steps = map[string]string{
+		"1": "seller.id",
+		"2": "store.id",
+		"3": "payment.store_id",
+		"4": "item.itemCount >= 1 and payment.store_id",
+		"5": "orders.orderCount >= 1",
+		"6": "orders.updatedCount >= 2",
+		"7": "orders.updatedCount >= 10",
+	}
+	return `
+		SELECT seller.identifier, store.name, item.itemCount, orders.orderCount
+		FROM selleree.seller AS seller
+		LEFT JOIN(
+			SELECT seller_id, id, name
+			FROM selleree.store
+		) AS store
+		ON store.seller_id = seller.id
+		LEFT JOIN(
+			SELECT store_id, count(id) AS itemCount
+			FROM selleree.item
+			WHERE DATE(created_at) <= DATE("` + endDate + `")
+			GROUP BY store_id
+		) AS item
+		ON store.id = item.store_id
+		LEFT JOIN(
+			SELECT 
+				created_at, 
+				last_modified_at, 
+				store_id, 
+				count(id) AS orderCount,
+				sum(if(DATE(last_modified_at) != DATE(created_at), 1, 0)) AS updatedCount
+			FROM selleree.order
+			WHERE DATE(last_modified_at) <= DATE("` + endDate + `")
+			GROUP BY store_id
+		) AS orders
+		ON store.id = orders.store_id
+		LEFT JOIN(
+			SELECT store_id, toss_contract, bank_accounts
+			FROM selleree.payment_method
+			WHERE JSON_LENGTH(bank_accounts) != 0
+			OR toss_contract -> '$.contractStatus' = 'WAIT_FOR_REVIEW'
+			OR toss_contract -> '$.contractStatus' = 'DONE'
+		) AS payment
+		ON store.id = payment.store_id
+		WHERE seller.id not in (1, 2, 3, 5, 55, 100, 149) and DATE(seller.created_at) >= DATE("` + startDate + `") and DATE(seller.created_at) <= DATE("` + endDate + `") and ` + steps[step] + `
+		ORDER BY seller.created_at desc
+		LIMIT ` + limit
+}

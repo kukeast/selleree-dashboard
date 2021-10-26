@@ -327,6 +327,57 @@ func GetFunnel(startDate string, endDate string) [7]string {
 	return result
 }
 
+func GetFunnelDetail(startDate string, endDate string, step string, limit string) []s.FunnelDetail {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result []s.FunnelDetail
+	//create Query
+	var query string = query.FunnelDetailQuery(startDate, endDate, step, limit)
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var data s.FunnelDetail
+
+	for rows.Next() {
+		err := rows.Scan(&data.RawIdentifier, &data.RawName, &data.RawItemCount, &data.RawOrderCount)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if data.RawIdentifier.Valid {
+			data.Identifier = data.RawIdentifier.String
+		} else {
+			data.Identifier = ""
+		}
+		if data.RawName.Valid {
+			data.Name = data.RawName.String
+		} else {
+			data.Name = ""
+		}
+		if data.RawItemCount.Valid {
+			data.ItemCount = data.RawItemCount.String
+		} else {
+			data.ItemCount = ""
+		}
+		if data.RawOrderCount.Valid {
+			data.OrderCount = data.RawOrderCount.String
+		} else {
+			data.OrderCount = ""
+		}
+		result = append(result, data)
+	}
+
+	return result
+}
+
 func CreateAllDate(startDate string, endDate string) []string {
 
 	var result []string

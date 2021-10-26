@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -70,6 +71,18 @@ func Api() {
 
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetFunnel(data["startDate"], data["endDate"]),
+		})
+	})
+
+	router.POST("/api/funnel-detail/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
+		var limit string = c.Param("limit")
+		body := c.Request.Body
+		value, _ := ioutil.ReadAll(body)
+		var data map[string]string
+		json.Unmarshal([]byte(value), &data)
+		fmt.Println(data)
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetFunnelDetail(data["startDate"], data["endDate"], data["step"], limit),
 		})
 	})
 
