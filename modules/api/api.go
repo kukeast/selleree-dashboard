@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -80,7 +79,7 @@ func Api() {
 		value, _ := ioutil.ReadAll(body)
 		var data map[string]string
 		json.Unmarshal([]byte(value), &data)
-		fmt.Println(data)
+
 		c.JSON(http.StatusOK, gin.H{
 			"data": mysql.GetFunnelDetail(data["startDate"], data["endDate"], data["step"], limit),
 		})
