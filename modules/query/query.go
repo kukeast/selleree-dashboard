@@ -156,7 +156,7 @@ var FunnelQuery = func(startDate string, endDate string) string {
 				last_modified_at, 
 				store_id, 
 				count(id) AS orderCount,
-				sum(if(DATE(last_modified_at) != DATE(created_at), 1, 0)) AS updatedCount
+				sum(if(last_modified_at != created_at, 1, 0)) AS updatedCount
 			FROM selleree.order
 			WHERE DATE(last_modified_at) <= DATE("` + endDate + `")
 			GROUP BY store_id
@@ -205,7 +205,7 @@ var FunnelDetailQuery = func(startDate string, endDate string, step string, limi
 				last_modified_at, 
 				store_id, 
 				count(id) AS orderCount,
-				sum(if(DATE(last_modified_at) != DATE(created_at), 1, 0)) AS updatedCount
+				sum(if(last_modified_at != created_at, 1, 0)) AS updatedCount
 			FROM selleree.order
 			WHERE DATE(last_modified_at) <= DATE("` + endDate + `")
 			GROUP BY store_id
