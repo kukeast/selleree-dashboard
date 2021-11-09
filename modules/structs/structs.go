@@ -74,8 +74,11 @@ type OrderDetailData struct {
 	AddressDetailLine    string         `json:"address_detail_line"`
 	RawDetailLine        sql.NullString `json:"-"`
 	BankName             string         `json:"bank_name"`
+	RawBankName          sql.NullString `json:"-"`
 	BankAccountNumber    string         `json:"bank_account_number"`
+	RawBankAccountNumber sql.NullString `json:"-"`
 	BankAccountHolder    string         `json:"bank_account_holder"`
+	RawBankAccountHolder sql.NullString `json:"-"`
 	Memo                 string         `json:"memo"`
 	RawMemo              sql.NullString `json:"-"`
 	DefaultShippingFee   string         `json:"default_shipping_fee"`

@@ -85,9 +85,9 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 		&result.ZipCode,
 		&result.AddressLine,
 		&result.RawDetailLine,
-		&result.BankName,
-		&result.BankAccountNumber,
-		&result.BankAccountHolder,
+		&result.RawBankName,
+		&result.RawBankAccountNumber,
+		&result.RawBankAccountHolder,
 		&result.FinancialStatus,
 		&result.FulfillmentStatus,
 		&result.DefaultShippingFee,
@@ -110,6 +110,21 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 		result.ImageUrl = result.RawUrl.String
 	} else {
 		result.ImageUrl = ""
+	}
+	if result.RawBankName.Valid {
+		result.BankName = result.RawBankName.String
+	} else {
+		result.BankName = ""
+	}
+	if result.RawBankAccountNumber.Valid {
+		result.BankAccountNumber = result.RawBankAccountNumber.String
+	} else {
+		result.BankAccountNumber = ""
+	}
+	if result.RawBankAccountHolder.Valid {
+		result.BankAccountHolder = result.RawBankAccountHolder.String
+	} else {
+		result.BankAccountHolder = ""
 	}
 	if result.RawMemo.Valid {
 		result.Memo = result.RawMemo.String
