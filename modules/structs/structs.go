@@ -63,6 +63,7 @@ type OrderData struct {
 	RawUrl             sql.NullString `json:"-"`
 	FinancialStatus    string         `json:"financial_status"`
 	FulfillmentStatus  string         `json:"fulfillment_status"`
+	PaymentMethod      string         `json:"payment_method"`
 }
 
 type OrderDetailData struct {
