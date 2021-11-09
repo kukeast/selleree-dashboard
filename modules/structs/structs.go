@@ -84,6 +84,7 @@ type OrderDetailData struct {
 	FulfillmentStatus    string         `json:"fulfillment_status"`
 	CreatedAt            string         `json:"created_at"`
 	LastModifiedAt       string         `json:"last_modified_at"`
+	PaymentMethod        string         `json:"payment_method"`
 	StoreName            string         `json:"store_name"`
 	Identifier           string         `json:"identifier"`
 	ItemName             string         `json:"item_name"`

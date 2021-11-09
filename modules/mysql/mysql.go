@@ -95,6 +95,7 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 		&result.RawMemo,
 		&result.CreatedAt,
 		&result.LastModifiedAt,
+		&result.PaymentMethod,
 		&result.StoreName,
 		&result.Identifier,
 		&result.ItemName,
