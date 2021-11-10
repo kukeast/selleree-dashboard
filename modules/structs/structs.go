@@ -17,7 +17,7 @@ type TodayData struct {
 	Count string `json:"count"`
 }
 
-type FunnelDetail struct {
+type SellerData struct {
 	RawIdentifier sql.NullString `json:"-"`
 	Identifier    string         `json:"identifier"`
 	RawName       sql.NullString `json:"-"`

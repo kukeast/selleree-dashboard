@@ -73,7 +73,18 @@ func Api() {
 		})
 	})
 
-	router.POST("/api/funnel-detail/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
+	router.POST("/api/payment-setting", TokenAuthMiddleware(), func(c *gin.Context) {
+		body := c.Request.Body
+		value, _ := ioutil.ReadAll(body)
+		var data map[string]string
+		json.Unmarshal([]byte(value), &data)
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetPaymentSetting(data["startDate"], data["endDate"]),
+		})
+	})
+
+	router.POST("/api/sellers/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
 		var limit string = c.Param("limit")
 		body := c.Request.Body
 		value, _ := ioutil.ReadAll(body)
@@ -81,7 +92,7 @@ func Api() {
 		json.Unmarshal([]byte(value), &data)
 
 		c.JSON(http.StatusOK, gin.H{
-			"data": mysql.GetFunnelDetail(data["startDate"], data["endDate"], data["step"], limit),
+			"data": mysql.GetSellers(data["startDate"], data["endDate"], data["segment"], limit),
 		})
 	})
 

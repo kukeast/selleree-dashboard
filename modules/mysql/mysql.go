@@ -343,7 +343,7 @@ func GetFunnel(startDate string, endDate string) [7]string {
 	return result
 }
 
-func GetFunnelDetail(startDate string, endDate string, step string, limit string) []s.FunnelDetail {
+func GetPaymentSetting(startDate string, endDate string) [2][5]string {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -351,9 +351,41 @@ func GetFunnelDetail(startDate string, endDate string, step string, limit string
 	}
 	defer db.Close() //main함수가 끝나면 db를 닫아라
 
-	var result []s.FunnelDetail
+	var result [2][5]string
+
 	//create Query
-	var query string = query.FunnelDetailQuery(startDate, endDate, step, limit)
+	var query string = query.PaymentSettingQuery(startDate, endDate)
+
+	row := db.QueryRow(query)
+	err = row.Scan(
+		&result[0][0],
+		&result[0][1],
+		&result[0][2],
+		&result[0][3],
+		&result[0][4],
+		&result[1][0],
+		&result[1][1],
+		&result[1][2],
+		&result[1][3],
+		&result[1][4],
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
+func GetSellers(startDate string, endDate string, segment string, limit string) []s.SellerData {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result []s.SellerData
+	//create Query
+	var query string = query.SellersQuery(startDate, endDate, segment, limit)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -361,7 +393,7 @@ func GetFunnelDetail(startDate string, endDate string, step string, limit string
 	}
 	defer rows.Close()
 
-	var data s.FunnelDetail
+	var data s.SellerData
 
 	for rows.Next() {
 		err := rows.Scan(&data.RawIdentifier, &data.RawName, &data.RawItemCount, &data.RawOrderCount)
