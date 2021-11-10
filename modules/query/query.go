@@ -132,7 +132,7 @@ var FunnelQuery = func(startDate string, endDate string) string {
 		SELECT 
 			sum(if(seller.id, 1, 0)) AS step1,
 			sum(if(store.id, 1, 0)) AS step2,
-			sum(if(payment.store_id, 1, 0 )) AS step3,
+			sum(if(JSON_LENGTH(payment.bank_accounts) or !payment.toss_contract ->> '$.contractStatus', 1, 0 )) AS step3,
 			sum(if(item.itemCount >= 1 and payment.store_id, 1, 0 )) AS step4,
 			sum(if(orders.orderCount >= 1, 1, 0)) AS step5,
 			sum(if(orders.updatedCount >= 2, 1, 0)) AS step6,
@@ -165,9 +165,6 @@ var FunnelQuery = func(startDate string, endDate string) string {
 		LEFT JOIN(
 			SELECT store_id, toss_contract, bank_accounts
 			FROM selleree.payment_method
-			WHERE JSON_LENGTH(bank_accounts) != 0
-			OR toss_contract -> '$.contractStatus' = 'WAIT_FOR_REVIEW'
-			OR toss_contract -> '$.contractStatus' = 'DONE'
 		) AS payment
 		ON store.id = payment.store_id
 		WHERE seller.id not in (1, 2, 3, 5, 55, 100, 149) and DATE(seller.created_at) >= DATE("` + startDate + `") and DATE(seller.created_at) <= DATE("` + endDate + `") 
@@ -201,7 +198,7 @@ var SellersQuery = func(startDate string, endDate string, segment string, limit 
 	var segments = map[string]string{
 		"가입":              "seller.id",
 		"상점 개설":           "store.id",
-		"결제 설정":           "payment.store_id",
+		"결제 설정":           "JSON_LENGTH(payment.bank_accounts) or !payment.toss_contract ->> '$.contractStatus'",
 		"상품 1개 이상 등록":     "item.itemCount >= 1 and payment.store_id",
 		"주문 1개 이상":        "orders.orderCount >= 1",
 		"주문 상태 변경 2개 이상":  "orders.updatedCount >= 2",
