@@ -18,14 +18,15 @@ type TodayData struct {
 }
 
 type SellerData struct {
-	RawIdentifier sql.NullString `json:"-"`
-	Identifier    string         `json:"identifier"`
-	RawName       sql.NullString `json:"-"`
-	Name          string         `json:"name"`
-	RawItemCount  sql.NullString `json:"-"`
-	ItemCount     string         `json:"itemCount"`
-	RawOrderCount sql.NullString `json:"-"`
-	OrderCount    string         `json:"orderCount"`
+	RawIdentifier              sql.NullString `json:"-"`
+	Identifier                 string         `json:"identifier"`
+	RawName                    sql.NullString `json:"-"`
+	Name                       string         `json:"name"`
+	RawItemCount               sql.NullString `json:"-"`
+	ItemCount                  string         `json:"itemCount"`
+	RawOrderCount              sql.NullString `json:"-"`
+	OrderCount                 string         `json:"orderCount"`
+	BusinessRegistrationNumber string         `json:"businessRegistrationNumber"`
 }
 
 type ShopgguData struct {

@@ -213,10 +213,10 @@ var SellersQuery = func(startDate string, endDate string, segment string, limit 
 		"계약 종료":           "payment.toss_contract ->> '$.contractStatus' = 'TERMINATED'",
 	}
 	return `
-		SELECT seller.identifier, store.name, item.itemCount, orders.orderCount
+		SELECT seller.identifier, store.name, item.itemCount, orders.orderCount, store.company_information ->> '$.businessRegistrationNumber'
 		FROM selleree.seller AS seller
 		LEFT JOIN(
-			SELECT seller_id, id, name
+			SELECT seller_id, id, name, company_information
 			FROM selleree.store
 		) AS store
 		ON store.seller_id = seller.id

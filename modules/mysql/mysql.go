@@ -396,7 +396,7 @@ func GetSellers(startDate string, endDate string, segment string, limit string) 
 	var data s.SellerData
 
 	for rows.Next() {
-		err := rows.Scan(&data.RawIdentifier, &data.RawName, &data.RawItemCount, &data.RawOrderCount)
+		err := rows.Scan(&data.RawIdentifier, &data.RawName, &data.RawItemCount, &data.RawOrderCount, &data.BusinessRegistrationNumber)
 		if err != nil {
 			log.Fatal(err)
 		}
