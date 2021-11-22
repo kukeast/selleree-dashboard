@@ -19,7 +19,7 @@ var ProductsQuery string = `
 	LIMIT 
 `
 var ShopggusQuery string = `
-	SELECT Mall.store_identifier, Mall_Theme.order, Mall_Theme.published_at
+	SELECT Mall.store_identifier, max(Mall_Theme.order), max(Mall_Theme.published_at)
 	FROM editor.mall_themes AS Mall_Theme
 	LEFT JOIN (
 		SELECT *
@@ -27,7 +27,8 @@ var ShopggusQuery string = `
 	) AS Mall
 	ON Mall.id = Mall_Theme.mall_id
 	WHERE Mall.seller_id not in (1, 2, 3, 5, 55, 100, 149)
-	ORDER BY Mall_Theme.published_at desc
+	GROUP BY Mall.store_identifier
+	ORDER BY max(Mall_Theme.published_at) desc
 	LIMIT 16
 `
 
