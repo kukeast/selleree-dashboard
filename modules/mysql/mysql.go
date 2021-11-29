@@ -375,7 +375,7 @@ func GetPaymentSetting(startDate string, endDate string) [2][5]string {
 	return result
 }
 
-func GetSellers(startDate string, endDate string, segment string, limit string) []s.SellerData {
+func GetSellers(startDate string, endDate string, segment string, limit string) []s.SellersData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -383,7 +383,7 @@ func GetSellers(startDate string, endDate string, segment string, limit string) 
 	}
 	defer db.Close() //main함수가 끝나면 db를 닫아라
 
-	var result []s.SellerData
+	var result []s.SellersData
 	//create Query
 	var query string = query.SellersQuery(startDate, endDate, segment, limit)
 
@@ -393,7 +393,7 @@ func GetSellers(startDate string, endDate string, segment string, limit string) 
 	}
 	defer rows.Close()
 
-	var data s.SellerData
+	var data s.SellersData
 
 	for rows.Next() {
 		err := rows.Scan(&data.Id, &data.RawIdentifier, &data.RawName, &data.RawItemCount, &data.RawOrderCount, &data.RawBusinessRegistrationNumber)
