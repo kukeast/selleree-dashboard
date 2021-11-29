@@ -95,6 +95,12 @@ func Api() {
 			"data": mysql.GetSellers(data["startDate"], data["endDate"], data["segment"], limit),
 		})
 	})
+	router.GET("/api/seller/:id", TokenAuthMiddleware(), func(c *gin.Context) {
+		var id string = c.Param("id")
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetSeller(id),
+		})
+	})
 
 	router.POST("/api/login", oauth.LogIn)
 	router.GET("/api/test", TokenAuthMiddleware(), func(c *gin.Context) {

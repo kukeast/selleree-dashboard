@@ -249,3 +249,49 @@ var SellersQuery = func(startDate string, endDate string, segment string, limit 
 		ORDER BY seller.created_at desc
 		LIMIT ` + limit
 }
+
+var SellerQuery = func(id string) string {
+	return `
+		SELECT 
+			seller.id,
+			seller.identifier, 
+			if(seller.full_name is null, "", seller.full_name),
+			if(seller.cell_phone_number is null, "", seller.cell_phone_number),
+			seller.created_at,
+			if(store.name is null, "", store.name),
+			if(store.category is null, "", store.category),
+			if(store.contacts is null, "", store.contacts),
+			if(store.editor_used = 0, 0, 1),
+			if(store.design_published = 0, 0, 1),
+			if(item.itemCount is null, "", item.itemCount),
+			if(orders.orderCount is null, "", orders.orderCount),
+			if(store.company_information ->> '$.businessRegistrationNumber' is null, "", store.company_information ->> '$.businessRegistrationNumber'),
+			if(payment.bank_accounts ->> '$.bankName' is null, "", payment.bank_accounts ->> '$.bankName'),
+			if(payment.toss_contract ->> '$.contractStatus' is null, "", payment.toss_contract ->> '$.contractStatus')
+		FROM selleree.seller AS seller
+		LEFT JOIN(
+			SELECT *
+			FROM selleree.store
+		) AS store
+		ON store.seller_id = seller.id
+		LEFT JOIN(
+			SELECT store_id, count(id) AS itemCount
+			FROM selleree.item
+			GROUP BY store_id
+		) AS item
+		ON store.id = item.store_id
+		LEFT JOIN(
+			SELECT store_id, count(id) AS orderCount
+			FROM selleree.order
+			GROUP BY store_id
+		) AS orders
+		ON store.id = orders.store_id
+		LEFT JOIN(
+			SELECT store_id, toss_contract, bank_accounts
+			FROM selleree.payment_method
+		) AS payment
+		ON store.id = payment.store_id
+		WHERE seller.id = ` + id + `
+		ORDER BY seller.created_at desc
+	`
+}

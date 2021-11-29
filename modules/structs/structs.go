@@ -17,7 +17,7 @@ type TodayData struct {
 	Count string `json:"count"`
 }
 
-type SellerData struct {
+type SellersData struct {
 	Id                            string         `json:"id"`
 	RawIdentifier                 sql.NullString `json:"-"`
 	Identifier                    string         `json:"identifier"`
@@ -29,6 +29,24 @@ type SellerData struct {
 	OrderCount                    string         `json:"orderCount"`
 	BusinessRegistrationNumber    string         `json:"businessRegistrationNumber"`
 	RawBusinessRegistrationNumber sql.NullString `json:"-"`
+}
+
+type SellerData struct {
+	Id                         string `json:"id"`
+	Identifier                 string `json:"identifier"`
+	SellerName                 string `json:"seller_name"`
+	PhoneNumber                string `json:"cell_phone_number"`
+	CreatedAt                  string `json:"created_at"`
+	StoreName                  string `json:"store_name"`
+	Category                   string `json:"category"`
+	Contacts                   string `json:"contacts"`
+	EditorUsed                 string `json:"editor_used"`
+	DesignPublished            string `json:"design_published"`
+	ItemCount                  string `json:"item_count"`
+	OrderCount                 string `json:"order_count"`
+	BusinessRegistrationNumber string `json:"business_registration_number"`
+	BankName                   string `json:"bank_name"`
+	TossStatus                 string `json:"toss_status"`
 }
 
 type ShopgguData struct {

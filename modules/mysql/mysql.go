@@ -431,6 +431,42 @@ func GetSellers(startDate string, endDate string, segment string, limit string) 
 	return result
 }
 
+func GetSeller(id string) s.SellerData {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result s.SellerData
+	//create Query
+	var query string = query.SellerQuery(id)
+
+	row := db.QueryRow(query)
+	err = row.Scan(
+		&result.Id,
+		&result.Identifier,
+		&result.SellerName,
+		&result.PhoneNumber,
+		&result.CreatedAt,
+		&result.StoreName,
+		&result.Category,
+		&result.Contacts,
+		&result.EditorUsed,
+		&result.DesignPublished,
+		&result.ItemCount,
+		&result.OrderCount,
+		&result.BusinessRegistrationNumber,
+		&result.BankName,
+		&result.TossStatus)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result
+}
+
 func CreateAllDate(startDate string, endDate string) []string {
 
 	var result []string
