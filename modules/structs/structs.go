@@ -18,6 +18,7 @@ type TodayData struct {
 }
 
 type SellerData struct {
+	Id                            string         `json:"id"`
 	RawIdentifier                 sql.NullString `json:"-"`
 	Identifier                    string         `json:"identifier"`
 	RawName                       sql.NullString `json:"-"`
