@@ -1,23 +1,62 @@
 package query
 
-var ProductsQuery string = `
-	SELECT Item.name, Item.price, Item.visibility,Item.deleted, Image.url, Image.c, Store.name, Item.id, Store.identifier
-	FROM selleree.item AS Item
-	LEFT JOIN(
-		SELECT url, count(*) c, item_id
-		FROM selleree.item_image
-		GROUP BY item_id
-	) AS Image
-	ON Item.id = Image.item_id
-	LEFT JOIN(
-		SELECT id, name, identifier
-		FROM selleree.store
-	) AS Store
-	ON Store.id = Item.store_id
-	WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
-	ORDER BY Item.created_at desc
-	LIMIT 
-`
+var ProductsQuery = func(limit string, id string) string {
+	var where string
+	if id == "0" {
+		where = "WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)"
+	} else {
+		where = `WHERE Seller.id = ` + id
+	}
+	return `
+		SELECT Item.name, Item.price, Item.visibility,Item.deleted, Image.url, Image.c, Store.name, Item.id, Store.identifier
+		FROM selleree.item AS Item
+		LEFT JOIN(
+			SELECT url, count(*) c, item_id
+			FROM selleree.item_image
+			GROUP BY item_id
+		) AS Image
+		ON Item.id = Image.item_id
+		LEFT JOIN(
+			SELECT id, name, identifier, seller_id
+			FROM selleree.store
+		) AS Store
+		ON Store.id = Item.store_id
+		LEFT JOIN(
+			SELECT id
+			FROM selleree.seller
+		) AS Seller
+		ON Store.seller_id = Seller.id ` + where + `
+		ORDER BY Item.created_at desc
+		LIMIT ` + limit + `
+	`
+}
+var OrdersQuery = func(limit string, sortBy string, id string) string {
+	var where string
+	if id == "0" {
+		where = "WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)"
+	} else {
+		where = `WHERE Seller.id = ` + id
+	}
+	return `
+		SELECT o.id, o.title, o.created_at, o.last_modified_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status, o.payment_method
+		FROM selleree.order AS o
+		LEFT JOIN (
+			SELECT *
+			FROM selleree.store
+		)AS store
+		ON o.store_id = store.id
+		LEFT JOIN (
+			SELECT *
+			FROM selleree.order_item
+		)AS item
+		ON item.order_id = o.id
+		LEFT JOIN(
+			SELECT id
+			FROM selleree.seller
+		) AS Seller
+		ON store.seller_id = Seller.id ` + where + `
+		ORDER BY ` + sortBy + ` desc LIMIT ` + limit
+}
 var ShopggusQuery string = `
 	SELECT Mall.store_identifier, max(Mall_Theme.order), max(Mall_Theme.published_at)
 	FROM editor.mall_themes AS Mall_Theme
@@ -32,21 +71,6 @@ var ShopggusQuery string = `
 	LIMIT 16
 `
 
-var OrdersQuery string = `
-	SELECT o.id, o.title, o.created_at, o.last_modified_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status, o.payment_method
-	FROM selleree.order AS o
-	LEFT JOIN (
-		SELECT *
-		FROM selleree.store
-	)AS store
-	ON o.store_id = store.id
-	LEFT JOIN (
-		SELECT *
-		FROM selleree.order_item
-	)AS item
-	ON item.order_id = o.id
-	WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
-`
 var OrderDetailQuery string = `
 	SELECT o.buyer_name, o.buyer_email, o.buyer_cell_phone_number, o.zip_code, o.address_line, o.address_detail_line, o.bank_name, o.bank_account_number, o.bank_account_holder, o.financial_status, o.fulfillment_status, o.default_shipping_fee, o.extra_shipping_fee, o.memo, o.created_at, o.last_modified_at, o.payment_method, store.name, store.identifier, item.name, item.price, item.image_url, item.quantity, item.item_id
 	FROM selleree.order AS o

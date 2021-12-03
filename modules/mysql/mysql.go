@@ -21,7 +21,7 @@ func InitConnectionString(connectionStrings ...string) {
 	db2 = connectionStrings[1]
 }
 
-func GetProducts(limit string) []s.ProductData {
+func GetProducts(limit string, id string) []s.ProductData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -32,8 +32,8 @@ func GetProducts(limit string) []s.ProductData {
 	var result []s.ProductData
 
 	//create Query
-	var query string = query.ProductsQuery
-	query = query + limit
+	var query string = query.ProductsQuery(limit, id)
+
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)
@@ -139,7 +139,7 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 	return result
 }
 
-func GetOrders(limit string, sortBy string) []s.OrderData {
+func GetOrders(limit string, sortBy string, id string) []s.OrderData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -150,8 +150,7 @@ func GetOrders(limit string, sortBy string) []s.OrderData {
 	var result []s.OrderData
 
 	//create Query
-	var query string = query.OrdersQuery
-	query = query + " ORDER BY " + sortBy + " desc " + "LIMIT " + limit
+	var query string = query.OrdersQuery(limit, sortBy, id)
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)

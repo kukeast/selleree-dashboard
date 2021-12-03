@@ -17,23 +17,20 @@ func Api() {
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 
-	router.GET("/api/products/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
-		var limit string = c.Param("limit")
+	router.GET("/api/products", TokenAuthMiddleware(), func(c *gin.Context) {
+		var limit string = c.Query("limit")
+		var id string = c.Query("id")
 		c.JSON(http.StatusOK, gin.H{
-			"data": mysql.GetProducts(limit),
+			"data": mysql.GetProducts(limit, id),
 		})
 	})
 
-	router.POST("/api/orders/:limit", TokenAuthMiddleware(), func(c *gin.Context) {
-		var limit string = c.Param("limit")
-
-		body := c.Request.Body
-		value, _ := ioutil.ReadAll(body)
-		var data map[string]string
-		json.Unmarshal([]byte(value), &data)
-
+	router.GET("/api/orders", TokenAuthMiddleware(), func(c *gin.Context) {
+		var limit string = c.Query("limit")
+		var sortBy string = c.Query("sortBy")
+		var id string = c.Query("id")
 		c.JSON(http.StatusOK, gin.H{
-			"data": mysql.GetOrders(limit, data["sortBy"]),
+			"data": mysql.GetOrders(limit, sortBy, id),
 		})
 	})
 
