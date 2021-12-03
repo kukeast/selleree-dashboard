@@ -1,12 +1,6 @@
 package query
 
-var ProductsQuery = func(limit string, id string) string {
-	var where string
-	if id == "0" {
-		where = "WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)"
-	} else {
-		where = `WHERE Seller.id = ` + id
-	}
+var ProductsQuery = func(limit string) string {
 	return `
 		SELECT Item.name, Item.price, Item.visibility,Item.deleted, Image.url, Image.c, Store.name, Item.id, Store.identifier
 		FROM selleree.item AS Item
@@ -25,18 +19,12 @@ var ProductsQuery = func(limit string, id string) string {
 			SELECT id
 			FROM selleree.seller
 		) AS Seller
-		ON Store.seller_id = Seller.id ` + where + `
+		ON Store.seller_id = Seller.id
+		WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
 		ORDER BY Item.created_at desc
-		LIMIT ` + limit + `
-	`
+		LIMIT ` + limit
 }
-var OrdersQuery = func(limit string, sortBy string, id string) string {
-	var where string
-	if id == "0" {
-		where = "WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)"
-	} else {
-		where = `WHERE Seller.id = ` + id
-	}
+var OrdersQuery = func(limit string, sortBy string) string {
 	return `
 		SELECT o.id, o.title, o.created_at, o.last_modified_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status, o.payment_method
 		FROM selleree.order AS o
@@ -54,7 +42,8 @@ var OrdersQuery = func(limit string, sortBy string, id string) string {
 			SELECT id
 			FROM selleree.seller
 		) AS Seller
-		ON store.seller_id = Seller.id ` + where + `
+		ON store.seller_id = Seller.id
+		WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
 		ORDER BY ` + sortBy + ` desc LIMIT ` + limit
 }
 var ShopggusQuery string = `

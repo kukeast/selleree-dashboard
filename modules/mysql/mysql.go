@@ -21,7 +21,7 @@ func InitConnectionString(connectionStrings ...string) {
 	db2 = connectionStrings[1]
 }
 
-func GetProducts(limit string, id string) []s.ProductData {
+func GetProducts(limit string) []s.ProductData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -32,7 +32,7 @@ func GetProducts(limit string, id string) []s.ProductData {
 	var result []s.ProductData
 
 	//create Query
-	var query string = query.ProductsQuery(limit, id)
+	var query string = query.ProductsQuery(limit)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -56,6 +56,42 @@ func GetProducts(limit string, id string) []s.ProductData {
 			data.ImageCount = int(data.RawCount.Int32)
 		} else {
 			data.ImageCount = 0
+		}
+		result = append(result, data)
+	}
+
+	return result
+}
+
+func GetOrders(limit string, sortBy string) []s.OrderData {
+	//db 연결
+	db, err := sql.Open("mysql", db1)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result []s.OrderData
+
+	//create Query
+	var query string = query.OrdersQuery(limit, sortBy)
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var data s.OrderData
+
+	for rows.Next() {
+		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.CreatedAt, &data.LastModifiedAt, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl, &data.FinancialStatus, &data.FulfillmentStatus, &data.PaymentMethod)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if data.RawUrl.Valid {
+			data.ImageUrl = data.RawUrl.String
+		} else {
+			data.ImageUrl = ""
 		}
 		result = append(result, data)
 	}
@@ -136,42 +172,6 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 	} else {
 		result.Memo = ""
 	}
-	return result
-}
-
-func GetOrders(limit string, sortBy string, id string) []s.OrderData {
-	//db 연결
-	db, err := sql.Open("mysql", db1)
-	if err != nil {
-		panic(err) //에러가 있으면 프로그램을 종료해라
-	}
-	defer db.Close() //main함수가 끝나면 db를 닫아라
-
-	var result []s.OrderData
-
-	//create Query
-	var query string = query.OrdersQuery(limit, sortBy, id)
-	rows, err := db.Query(query)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	var data s.OrderData
-
-	for rows.Next() {
-		err := rows.Scan(&data.OrderId, &data.OrderTitle, &data.CreatedAt, &data.LastModifiedAt, &data.DefaultShippingFee, &data.ExtraShippingFee, &data.Name, &data.Identifier, &data.Price, &data.Quantity, &data.RawUrl, &data.FinancialStatus, &data.FulfillmentStatus, &data.PaymentMethod)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if data.RawUrl.Valid {
-			data.ImageUrl = data.RawUrl.String
-		} else {
-			data.ImageUrl = ""
-		}
-		result = append(result, data)
-	}
-
 	return result
 }
 

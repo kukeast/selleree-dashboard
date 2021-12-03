@@ -56,17 +56,17 @@ type ShopgguData struct {
 }
 
 type ProductData struct {
-	ItemName   string         `json:"item-name"`
-	ItemId     string         `json:"item-id"`
+	ItemName   string         `json:"item_name"`
+	ItemId     string         `json:"item_id"`
 	Price      string         `json:"price"`
 	Visibility string         `json:"visibility"`
 	Deleted    string         `json:"deleted"`
 	RawUrl     sql.NullString `json:"-"`
 	Url        string         `json:"url"`
 	RawCount   sql.NullInt32  `json:"-"`
-	ImageCount int            `json:"image-count"`
-	StoreName  string         `json:"store-name"`
-	StoreId    string         `json:"store-id"`
+	ImageCount int            `json:"image_count"`
+	StoreName  string         `json:"store_name"`
+	StoreId    string         `json:"store_id"`
 }
 
 type OrderData struct {
