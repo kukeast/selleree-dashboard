@@ -24,9 +24,9 @@ type SellersData struct {
 	RawName                       sql.NullString `json:"-"`
 	Name                          string         `json:"name"`
 	RawItemCount                  sql.NullString `json:"-"`
-	ItemCount                     string         `json:"itemCount"`
+	ItemCount                     string         `json:"item_count"`
 	RawOrderCount                 sql.NullString `json:"-"`
-	OrderCount                    string         `json:"orderCount"`
+	OrderCount                    string         `json:"order_count"`
 	BusinessRegistrationNumber    string         `json:"businessRegistrationNumber"`
 	RawBusinessRegistrationNumber sql.NullString `json:"-"`
 }
@@ -50,7 +50,7 @@ type SellerData struct {
 }
 
 type ShopgguData struct {
-	StoreName string `json:"store-name"`
+	StoreName string `json:"store_name"`
 	Order     int    `json:"order"`
 	Date      string `json:"date"`
 }
