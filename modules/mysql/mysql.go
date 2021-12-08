@@ -21,7 +21,33 @@ func InitConnectionString(connectionStrings ...string) {
 	db2 = connectionStrings[1]
 }
 
-func GetProducts(limit string) []s.ProductData {
+func GetCover(id string) s.CoverData {
+	db, err := sql.Open("mysql", db2)
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+
+	var result s.CoverData
+
+	//create Query
+	var query string = query.CoverQuery(id)
+
+	row := db.QueryRow(query)
+	err = row.Scan(
+		&result.Visible,
+		&result.CoverMediaUrl,
+		&result.BackgroundType,
+		&result.BackgroundColor,
+		&result.BackgroundMediaUrl,
+	)
+	if err != nil {
+		// log.Fatal(err)
+	}
+	return result
+}
+
+func GetProducts(limit string, id string) []s.ProductData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -32,7 +58,7 @@ func GetProducts(limit string) []s.ProductData {
 	var result []s.ProductData
 
 	//create Query
-	var query string = query.ProductsQuery(limit)
+	var query string = query.ProductsQuery(limit, id)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -63,7 +89,7 @@ func GetProducts(limit string) []s.ProductData {
 	return result
 }
 
-func GetOrders(limit string, sortBy string) []s.OrderData {
+func GetOrders(limit string, sortBy string, id string) []s.OrderData {
 	//db 연결
 	db, err := sql.Open("mysql", db1)
 	if err != nil {
@@ -74,7 +100,7 @@ func GetOrders(limit string, sortBy string) []s.OrderData {
 	var result []s.OrderData
 
 	//create Query
-	var query string = query.OrdersQuery(limit, sortBy)
+	var query string = query.OrdersQuery(limit, sortBy, id)
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Fatal(err)
@@ -449,6 +475,7 @@ func GetSeller(id string) s.SellerData {
 		&result.SellerName,
 		&result.PhoneNumber,
 		&result.CreatedAt,
+		&result.StoreId,
 		&result.StoreName,
 		&result.Category,
 		&result.Contacts,
@@ -457,7 +484,9 @@ func GetSeller(id string) s.SellerData {
 		&result.ItemCount,
 		&result.OrderCount,
 		&result.BusinessRegistrationNumber,
+		&result.Holder,
 		&result.BankName,
+		&result.AccountNumber,
 		&result.TossStatus)
 	if err != nil {
 		log.Fatal(err)

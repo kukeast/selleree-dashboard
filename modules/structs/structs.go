@@ -32,21 +32,24 @@ type SellersData struct {
 }
 
 type SellerData struct {
-	Id                         string `json:"id"`
-	Identifier                 string `json:"identifier"`
-	SellerName                 string `json:"seller_name"`
-	PhoneNumber                string `json:"cell_phone_number"`
-	CreatedAt                  string `json:"created_at"`
-	StoreName                  string `json:"store_name"`
-	Category                   string `json:"category"`
-	Contacts                   string `json:"contacts"`
-	EditorUsed                 string `json:"editor_used"`
-	DesignPublished            string `json:"design_published"`
-	ItemCount                  string `json:"item_count"`
-	OrderCount                 string `json:"order_count"`
-	BusinessRegistrationNumber string `json:"business_registration_number"`
-	BankName                   string `json:"bank_name"`
-	TossStatus                 string `json:"toss_status"`
+	Id                         sql.NullString `json:"id"`
+	Identifier                 sql.NullString `json:"identifier"`
+	SellerName                 sql.NullString `json:"seller_name"`
+	PhoneNumber                sql.NullString `json:"cell_phone_number"`
+	CreatedAt                  sql.NullString `json:"created_at"`
+	StoreId                    sql.NullString `json:"store_id"`
+	StoreName                  sql.NullString `json:"store_name"`
+	Category                   sql.NullString `json:"category"`
+	Contacts                   sql.NullString `json:"contacts"`
+	EditorUsed                 sql.NullString `json:"editor_used"`
+	DesignPublished            sql.NullString `json:"design_published"`
+	ItemCount                  sql.NullString `json:"item_count"`
+	OrderCount                 sql.NullString `json:"order_count"`
+	BusinessRegistrationNumber sql.NullString `json:"business_registration_number"`
+	Holder                     sql.NullString `json:"holder"`
+	BankName                   sql.NullString `json:"bank_name"`
+	AccountNumber              sql.NullString `json:"account_number"`
+	TossStatus                 sql.NullString `json:"toss_status"`
 }
 
 type ShopgguData struct {
@@ -132,4 +135,12 @@ type ChartData struct {
 type MockChartData struct {
 	Data []int
 	Date []string
+}
+
+type CoverData struct {
+	Visible            sql.NullString `json:"visible"`
+	CoverMediaUrl      sql.NullString `json:"cover_media_url"`
+	BackgroundType     sql.NullString `json:"background_type"`
+	BackgroundColor    sql.NullString `json:"background_color"`
+	BackgroundMediaUrl sql.NullString `json:"background_media_url"`
 }

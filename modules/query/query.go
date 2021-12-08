@@ -1,6 +1,35 @@
 package query
 
-var ProductsQuery = func(limit string) string {
+var CoverQuery = func(id string) string {
+	return `
+		SELECT
+			blocks.visible,
+			covers.cover_media_url,
+			covers.background_type,
+			covers.background_color,
+			covers.background_media_url
+		FROM editor.malls as malls
+		LEFT JOIN(
+			SELECT *
+			FROM editor.blocks
+			WHERE type = 'COVER'
+		) as blocks
+		ON blocks.theme_id = malls.theme_id
+		LEFT JOIN(
+			SELECT *
+			FROM editor.block_covers
+		) as covers
+		ON covers.block_id = blocks.id
+		WHERE malls.seller_id = ` + id
+}
+
+var ProductsQuery = func(limit string, id string) string {
+	var where string
+	if id != "" {
+		where = `Seller.id = ` + id
+	} else {
+		where = "store_id not in (1, 2, 9, 10, 49, 126, 209)"
+	}
 	return `
 		SELECT Item.name, Item.price, Item.visibility,Item.deleted, Image.url, Image.c, Store.name, Item.id, Store.identifier
 		FROM selleree.item AS Item
@@ -20,11 +49,17 @@ var ProductsQuery = func(limit string) string {
 			FROM selleree.seller
 		) AS Seller
 		ON Store.seller_id = Seller.id
-		WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
+		WHERE ` + where + ` 
 		ORDER BY Item.created_at desc
 		LIMIT ` + limit
 }
-var OrdersQuery = func(limit string, sortBy string) string {
+var OrdersQuery = func(limit string, sortBy string, id string) string {
+	var where string
+	if id != "" {
+		where = `Seller.id = ` + id
+	} else {
+		where = "store_id not in (1, 2, 9, 10, 49, 126, 209)"
+	}
 	return `
 		SELECT o.id, o.title, o.created_at, o.last_modified_at, o.default_shipping_fee, o.extra_shipping_fee, store.name, store.identifier, item.price, item.quantity, item.image_url, o.financial_status, o.fulfillment_status, o.payment_method
 		FROM selleree.order AS o
@@ -43,7 +78,7 @@ var OrdersQuery = func(limit string, sortBy string) string {
 			FROM selleree.seller
 		) AS Seller
 		ON store.seller_id = Seller.id
-		WHERE store_id not in (1, 2, 9, 10, 49, 126, 209)
+		WHERE ` + where + ` 
 		ORDER BY ` + sortBy + ` desc LIMIT ` + limit
 }
 var ShopggusQuery string = `
@@ -268,19 +303,22 @@ var SellerQuery = func(id string) string {
 		SELECT 
 			seller.id,
 			seller.identifier, 
-			if(seller.full_name is null, "", seller.full_name),
-			if(seller.cell_phone_number is null, "", seller.cell_phone_number),
+			seller.full_name,
+			seller.cell_phone_number,
 			seller.created_at,
-			if(store.name is null, "", store.name),
-			if(store.category is null, "", store.category),
-			if(store.contacts is null, "", store.contacts),
-			if(store.editor_used = 0, 0, 1),
-			if(store.design_published = 0, 0, 1),
-			if(item.itemCount is null, "", item.itemCount),
-			if(orders.orderCount is null, "", orders.orderCount),
-			if(store.company_information ->> '$.businessRegistrationNumber' is null, "", store.company_information ->> '$.businessRegistrationNumber'),
-			if(payment.bank_accounts ->> '$.bankName' is null, "", payment.bank_accounts ->> '$.bankName'),
-			if(payment.toss_contract ->> '$.contractStatus' is null, "", payment.toss_contract ->> '$.contractStatus')
+			store.id,
+			store.name,
+			store.category,
+			store.contacts,
+			store.editor_used,
+			store.design_published,
+			item.itemCount,
+			orders.orderCount,
+			store.company_information ->> '$.businessRegistrationNumber',
+			payment.bank_accounts ->> '$[0].holder',
+			payment.bank_accounts ->> '$[0].bankName',
+			payment.bank_accounts ->> '$[0].accountNumber',
+			payment.toss_contract ->> '$.contractStatus'
 		FROM selleree.seller AS seller
 		LEFT JOIN(
 			SELECT *
