@@ -121,6 +121,7 @@ type OrderDetailData struct {
 	ImageUrl             string         `json:"image_url"`
 	RawUrl               sql.NullString `json:"-"`
 	ItemId               string         `json:"item_id"`
+	SellerId             string         `json:"seller_id"`
 }
 type ChartDataSet struct {
 	Categories []string    `json:"categories"`

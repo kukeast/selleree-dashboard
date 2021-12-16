@@ -164,7 +164,8 @@ func GetOrderDetail(orderId string) s.OrderDetailData {
 		&result.Price,
 		&result.RawUrl,
 		&result.Quantity,
-		&result.ItemId)
+		&result.ItemId,
+		&result.SellerId)
 	if err != nil {
 		log.Fatal(err)
 	}
