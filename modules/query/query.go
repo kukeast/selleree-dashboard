@@ -346,3 +346,41 @@ var SellerQuery = func(id string) string {
 		ORDER BY seller.created_at desc
 	`
 }
+var SearchQuery = func(index int, keyword string) string {
+	if index == 0 {
+		return `
+			SELECT 
+				seller_id,
+				identifier,
+				name
+			FROM selleree.store as store
+			WHERE name like '` + keyword + `%'
+			ORDER BY id desc
+			LIMIT 20
+		`
+	} else {
+		return `
+			SELECT
+				item.id,
+				item.name,
+				item.price,
+				image.url,
+				store.identifier
+			FROM selleree.item AS item
+			LEFT JOIN(
+				SELECT url, item_id
+				FROM selleree.item_image
+				GROUP BY item_id
+			) AS image
+			ON item.id = image.item_id
+			LEFT JOIN(
+				SELECT *
+				FROM selleree.store
+			) AS store
+			ON store.id = item.store_id
+			WHERE item.name like '%` + keyword + `%'
+			ORDER BY item.id desc
+			LIMIT 20
+		`
+	}
+}

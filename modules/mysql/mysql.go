@@ -511,3 +511,66 @@ func CreateAllDate(startDate string, endDate string) []string {
 	}
 	return result
 }
+
+func GetSearchResult(keyword string) s.SearchResultData {
+	var result s.SearchResultData
+
+	//create Query
+	db, err := sql.Open("mysql", db1)
+
+	if err != nil {
+		panic(err) //에러가 있으면 프로그램을 종료해라
+	}
+	defer db.Close() //main함수가 끝나면 db를 닫아라
+	for i := 0; i < 2; i++ {
+		var query string = query.SearchQuery(i, keyword)
+		if i == 0 {
+			rows, err := db.Query(query)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+
+			var data s.SellersData
+			for rows.Next() {
+				err := rows.Scan(&data.Id, &data.RawIdentifier, &data.RawName)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if data.RawIdentifier.Valid {
+					data.Identifier = data.RawIdentifier.String
+				} else {
+					data.Identifier = ""
+				}
+				if data.RawName.Valid {
+					data.Name = data.RawName.String
+				} else {
+					data.Name = ""
+				}
+				result.Sellers = append(result.Sellers, data)
+			}
+		} else {
+			rows, err := db.Query(query)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+
+			var data s.ProductData
+			for rows.Next() {
+				err := rows.Scan(&data.ItemId, &data.ItemName, &data.Price, &data.RawUrl, &data.StoreId)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if data.RawUrl.Valid {
+					data.Url = data.RawUrl.String
+				} else {
+					data.Url = ""
+				}
+				result.Products = append(result.Products, data)
+			}
+		}
+	}
+
+	return result
+}

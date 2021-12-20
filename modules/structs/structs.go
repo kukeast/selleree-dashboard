@@ -145,3 +145,8 @@ type CoverData struct {
 	BackgroundColor    sql.NullString `json:"background_color"`
 	BackgroundMediaUrl sql.NullString `json:"background_media_url"`
 }
+
+type SearchResultData struct {
+	Products []ProductData `json:"products"`
+	Sellers  []SellersData `json:"store"`
+}

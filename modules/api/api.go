@@ -66,6 +66,13 @@ func Api() {
 		})
 	})
 
+	router.GET("/api/search", TokenAuthMiddleware(), func(c *gin.Context) {
+		var keyword string = c.Query("keyword")
+		c.JSON(http.StatusOK, gin.H{
+			"data": mysql.GetSearchResult(keyword),
+		})
+	})
+
 	router.POST("/api/funnel", TokenAuthMiddleware(), func(c *gin.Context) {
 		body := c.Request.Body
 		value, _ := ioutil.ReadAll(body)
